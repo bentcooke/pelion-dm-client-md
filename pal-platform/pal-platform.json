@@ -99,5 +99,26 @@
         "to": "Middleware/mbedtls/mbedtls"
       }
     }
+  },  
+   "Yocto_Generic_mLinux_mbedtls":
+  {
+    "device": {
+      "name": "Yocto_Generic"
+    },
+    "os": {
+      "name": "Linux_Yocto",
+      "version": "v2.2"
+    },
+    "middleware": {
+      "mbedtls": {
+        "version": "2.13.1",
+        "from": {
+          "protocol": "git",
+          "location": "https://github.com/ARMmbed/mbedtls.git",
+          "tag": "mbedtls-2.13.1"
+        },
+        "to": "Middleware/mbedtls/mbedtls"
+      }
+    }
   }
 }
