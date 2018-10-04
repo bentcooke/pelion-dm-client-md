@@ -27,6 +27,7 @@ endif()
 
 add_definitions(-DPAL_DTLS_PEER_MIN_TIMEOUT=5000)
 
+add_definitions(-DMBED_CONF_APP_DEVELOPER_MODE=1)
 add_definitions(-DMBED_CONF_MBED_TRACE_ENABLE=1)
 add_definitions(-DPAL_FS_MOUNT_POINT_PRIMARY="\\"/var/config/mbed\\"")
 add_definitions(-DPAL_FS_MOUNT_POINT_SECONDARY="\\"/var/config/mbed\\"")
