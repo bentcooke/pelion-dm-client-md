@@ -27,7 +27,7 @@
 #include "certificate_enrollment_user_cb.h"
 #endif
 
-static uint8_t test_cnt = 50;
+static uint8_t test_cnt = 100;
 uint8_t tmpi = 0;
 
 // event based LED blinker, controlled via pattern_resource
@@ -50,9 +50,9 @@ static M2MResource* test_res;
 static SimpleM2MClient *client;
 
 void updatetestcnt() {
-    test_cnt++;
-    if (test_cnt > 100) {
-        test_cnt = 20;
+    test_cnt--;
+    if (test_cnt < 10) {
+        test_cnt = 100;
     }
  }
 
