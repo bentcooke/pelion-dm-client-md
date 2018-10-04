@@ -27,6 +27,9 @@
 #include "certificate_enrollment_user_cb.h"
 #endif
 
+static uint8_t test_cnt = 50;
+uint8_t tmpi = 0;
+
 // event based LED blinker, controlled via pattern_resource
 static Blinky blinky;
 
@@ -41,9 +44,46 @@ int main(void)
 static M2MResource* button_res;
 static M2MResource* pattern_res;
 static M2MResource* blink_res;
+static M2MResource* test_res;
 
 // Pointer to mbedClient, used for calling close function.
 static SimpleM2MClient *client;
+
+void updatetestcnt() {
+    test_cnt++;
+    if (test_cnt > 100) {
+        test_cnt = 20;
+    }
+ }
+
+void test_notification_status_callback(const M2MBase& object, const NoticationDeliveryStatus status)
+{
+    switch(status) {
+        case NOTIFICATION_STATUS_BUILD_ERROR:
+            printf("Notification callback: (%s) error when building CoAP message\n", object.uri_path());
+            break;
+        case NOTIFICATION_STATUS_RESEND_QUEUE_FULL:
+            printf("Notification callback: (%s) CoAP resend queue full\n", object.uri_path());
+            break;
+        case NOTIFICATION_STATUS_SENT:
+            printf("Notification callback: (%s) Notification sent to server\n", object.uri_path());
+            break;
+        case NOTIFICATION_STATUS_DELIVERED:
+            printf("Notification callback: (%s) Notification delivered\n", object.uri_path());
+            break;
+        case NOTIFICATION_STATUS_SEND_FAILED:
+            printf("Notification callback: (%s) Notification sending failed\n", object.uri_path());
+            break;
+        case NOTIFICATION_STATUS_SUBSCRIBED:
+            printf("Notification callback: (%s) subscribed\n", object.uri_path());
+            break;
+        case NOTIFICATION_STATUS_UNSUBSCRIBED:
+            printf("Notification callback: (%s) subscription removed\n", object.uri_path());
+            break;
+        default:
+            break;
+    }
+}	
 
 void pattern_updated(const char *)
 {
@@ -196,6 +236,10 @@ void main_application(void)
     print_stack_statistics();
 #endif
 
+// Create resource for test count. Path of this resource will be: 9999/0/1.
+    test_res = mbedClient.add_cloud_resource(9999, 0, 1, "test_count", M2MResourceInstance::INTEGER,
+                              M2MBase::GET_ALLOWED, 0, true, NULL, (void*)test_notification_status_callback);
+
     // Create resource for button count. Path of this resource will be: 3200/0/5501.
     button_res = mbedClient.add_cloud_resource(3200, 0, 5501, "button_resource", M2MResourceInstance::INTEGER,
                               M2MBase::GET_ALLOWED, 0, true, NULL, (void*)button_status_callback);
@@ -229,11 +273,14 @@ void main_application(void)
     // Check if client is registering or registered, if true sleep and repeat.
 
     while (mbedClient.is_register_called()) {
-        static int button_count = 0;
-        mcc_platform_do_wait(100);
-        if (mcc_platform_button_clicked()) {
-            button_res->set_value(++button_count);
-        }
+        mcc_platform_do_wait(1);
+	tmpi++;
+	if(tmpi > 5)
+	{
+		updatetestcnt();    
+		test_res->set_value(test_cnt);
+		tmpi=0;
+	}
     }
 
     // Client unregistered, exit program.

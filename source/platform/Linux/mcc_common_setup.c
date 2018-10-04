@@ -159,9 +159,9 @@ int mcc_platform_reformat_storage(void)
     return 0;
 }
 
-void mcc_platform_do_wait(int timeout_ms)
+void mcc_platform_do_wait(int timeout_s)
 {
-    usleep(timeout_ms * 1000);
+    sleep(timeout_s);
 }
 
 int mcc_platform_run_program(main_t mainFunc)
